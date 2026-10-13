@@ -1,0 +1,53 @@
+# ---------------------------------------------------------------------------
+# flx-agentes-runner: el motor de agentes de Flexxus como servicio
+#
+# Codigo e imagen: bitbucket.org/flexxus_id/flx-agentes-runner
+# Este archivo va al repo de stack (flx-infra/flx-agentes-runner) como docker-compose.yml.
+#
+# Corre los casos de flx-agentes (soporte, brief, cotizacion) a pedido del Asistente y del Cotizador.
+# Sin puertos publicados: solo se llega por la red flx-agentes (http://flx-agentes-runner_runner:3000).
+#
+# Variables del stack: SERVICE_NAME, NODE, LOKI_URL y los secretos CLAUDE_CODE_OAUTH_TOKEN (o
+# ANTHROPIC_API_KEY), RUNNER_TOKEN_ASISTENTE y RUNNER_TOKEN_COTIZADOR (los carga una persona).
+# ---------------------------------------------------------------------------
+version: '3.6'
+
+services:
+  runner:
+    image: fabreguesm/flx-agentes-runner:0.1.0
+    hostname: flx-agentes-runner
+    environment:
+      - TZ=America/Argentina/Buenos_Aires
+      - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - RUNNER_APPS=asistente=soporte,cotizador=cotizador
+      - RUNNER_TOKEN_ASISTENTE=${RUNNER_TOKEN_ASISTENTE}
+      - RUNNER_TOKEN_COTIZADOR=${RUNNER_TOKEN_COTIZADOR}
+      - CODIGO_MCP_URL=http://flx-mcp-codigo_mcp:8102/mcp
+      - HELPDESK_MCP_URL=http://flx-mcp-helpdesk_mcp:8101/mcp
+      - DOCUMENTOS_MCP_URL=http://flx-mcp-documentos_mcp:8103/mcp
+      - MEMORIA_MCP_URL=http://flx-mcp-memoria_mcp:8100/mcp
+      - MAX_PARALELO=2
+    networks:
+      - agentes
+    volumes:
+      - datos:/data
+    deploy:
+      placement:
+        constraints: ["${NODE}"]
+      restart_policy:
+        condition: any
+        delay: 10s
+    logging:
+      driver: loki
+      options:
+        loki-url: ${LOKI_URL}
+
+volumes:
+  datos:
+    name: "${SERVICE_NAME}_datos"
+
+networks:
+  agentes:
+    external: true
+    name: flx-agentes
