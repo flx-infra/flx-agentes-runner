@@ -14,7 +14,7 @@ version: '3.6'
 
 services:
   runner:
-    image: fabreguesm/flx-agentes-runner:0.1.1
+    image: fabreguesm/flx-agentes-runner:0.2.0
     hostname: flx-agentes-runner
     environment:
       - TZ=America/Argentina/Buenos_Aires
@@ -27,6 +27,8 @@ services:
       - HELPDESK_MCP_URL=http://flx-mcp-helpdesk_mcp:8101/mcp
       - DOCUMENTOS_MCP_URL=http://flx-mcp-documentos_mcp:8103/mcp
       - MEMORIA_MCP_URL=http://flx-mcp-memoria_mcp:8100/mcp
+      # Version del ERP del cliente (desde 0.2.0): flx-mcp-sar.
+      - SAR_MCP_URL=http://flx-mcp-sar_mcp:8104/mcp
       - MAX_PARALELO=2
     networks:
       - agentes
