@@ -8,7 +8,7 @@
 # Sin puertos publicados: solo se llega por la red flx-agentes (http://flx-agentes-runner_runner:3000).
 #
 # Variables del stack: SERVICE_NAME, NODE, LOKI_URL y los secretos CLAUDE_CODE_OAUTH_TOKEN (o
-# ANTHROPIC_API_KEY), RUNNER_TOKEN_ASISTENTE y RUNNER_TOKEN_COTIZADOR (los carga una persona).
+# ANTHROPIC_API_KEY), RUNNER_TOKEN_ASISTENTE, RUNNER_TOKEN_COTIZADOR y AGENTES_TOKEN (los carga una persona).
 # ---------------------------------------------------------------------------
 version: '3.6'
 
@@ -23,6 +23,9 @@ services:
       - RUNNER_APPS=asistente=soporte,cotizador=cotizador
       - RUNNER_TOKEN_ASISTENTE=${RUNNER_TOKEN_ASISTENTE}
       - RUNNER_TOKEN_COTIZADOR=${RUNNER_TOKEN_COTIZADOR}
+      # Agentes personalizados desde el portal (desde 0.3.0): mismo valor que en flx-agentes-web
+      - AGENTES_TOKEN=${AGENTES_TOKEN}
+      - PORTAL_URL=http://flx-agentes-web_web:3000
       - CODIGO_MCP_URL=http://flx-mcp-codigo_mcp:8102/mcp
       - HELPDESK_MCP_URL=http://flx-mcp-helpdesk_mcp:8101/mcp
       - DOCUMENTOS_MCP_URL=http://flx-mcp-documentos_mcp:8103/mcp
