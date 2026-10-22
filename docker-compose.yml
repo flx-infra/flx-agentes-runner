@@ -4,29 +4,36 @@
 # Codigo e imagen: bitbucket.org/flexxus_id/flx-agentes-runner
 # Este archivo va al repo de stack (flx-infra/flx-agentes-runner) como docker-compose.yml.
 #
-# Corre los casos de flx-agentes (soporte, brief, cotizacion) a pedido del Asistente y del Cotizador.
+# Corre los casos de flx-agentes (soporte, brief, cotizacion, spec) a pedido del Asistente, del Cotizador y de Specs de historias.
 # Sin puertos publicados: solo se llega por la red flx-agentes (http://flx-agentes-runner_runner:3000).
 #
 # Variables del stack: SERVICE_NAME, NODE, LOKI_URL y los secretos CLAUDE_CODE_OAUTH_TOKEN (o
-# ANTHROPIC_API_KEY), RUNNER_TOKEN_ASISTENTE y RUNNER_TOKEN_COTIZADOR (los carga una persona).
+# ANTHROPIC_API_KEY), RUNNER_TOKEN_ASISTENTE, RUNNER_TOKEN_COTIZADOR, RUNNER_TOKEN_HISTORIAS y AGENTES_TOKEN (los carga una persona).
 # ---------------------------------------------------------------------------
 version: '3.6'
 
 services:
   runner:
-    image: fabreguesm/flx-agentes-runner:0.1.1
+    image: fabreguesm/flx-agentes-runner:0.4.1
     hostname: flx-agentes-runner
     environment:
       - TZ=America/Argentina/Buenos_Aires
       - CLAUDE_CODE_OAUTH_TOKEN=${CLAUDE_CODE_OAUTH_TOKEN}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
-      - RUNNER_APPS=asistente=soporte,cotizador=cotizador
+      - RUNNER_APPS=asistente=soporte,cotizador=cotizador,historias=historias
       - RUNNER_TOKEN_ASISTENTE=${RUNNER_TOKEN_ASISTENTE}
       - RUNNER_TOKEN_COTIZADOR=${RUNNER_TOKEN_COTIZADOR}
+      # Specs de historias (desde 0.4.0): mismo valor que RUNNER_TOKEN en el stack de flx-agente-historias
+      - RUNNER_TOKEN_HISTORIAS=${RUNNER_TOKEN_HISTORIAS}
+      # Agentes personalizados desde el portal (desde 0.3.0): mismo valor que en flx-agentes-web
+      - AGENTES_TOKEN=${AGENTES_TOKEN}
+      - PORTAL_URL=http://flx-agentes-web_web:3000
       - CODIGO_MCP_URL=http://flx-mcp-codigo_mcp:8102/mcp
       - HELPDESK_MCP_URL=http://flx-mcp-helpdesk_mcp:8101/mcp
       - DOCUMENTOS_MCP_URL=http://flx-mcp-documentos_mcp:8103/mcp
       - MEMORIA_MCP_URL=http://flx-mcp-memoria_mcp:8100/mcp
+      # Version del ERP del cliente (desde 0.2.0): flx-mcp-sar.
+      - SAR_MCP_URL=http://flx-mcp-sar_mcp:8104/mcp
       - MAX_PARALELO=2
     networks:
       - agentes
