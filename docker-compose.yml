@@ -14,7 +14,7 @@ version: '3.6'
 
 services:
   runner:
-    image: fabreguesm/flx-agentes-runner:0.4.15
+    image: fabreguesm/flx-agentes-runner:0.4.16
     hostname: flx-agentes-runner
     environment:
       - TZ=America/Argentina/Buenos_Aires
@@ -34,6 +34,8 @@ services:
       - MEMORIA_MCP_URL=http://flx-mcp-memoria_mcp:8100/mcp
       # Version del ERP del cliente (desde 0.2.0): flx-mcp-sar.
       - SAR_MCP_URL=http://flx-mcp-sar_mcp:8104/mcp
+      # MCP remoto de Figma (desde 0.4.16): se autoriza una vez con "claude mcp login figma" en el contenedor; queda en /data.
+      - FIGMA_MCP_URL=https://mcp.figma.com/mcp
       - MAX_PARALELO=2
     networks:
       - agentes
