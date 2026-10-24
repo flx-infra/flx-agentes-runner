@@ -14,7 +14,7 @@ version: '3.6'
 
 services:
   runner:
-    image: fabreguesm/flx-agentes-runner:0.4.20
+    image: fabreguesm/flx-agentes-runner:0.4.21
     hostname: flx-agentes-runner
     environment:
       - TZ=America/Argentina/Buenos_Aires
@@ -39,6 +39,8 @@ services:
       - MAX_PARALELO=2
       # Ventana de compactacion del contexto de cada agente (tokens; desde 0.4.20). 0 = sin compactar.
       - COMPACT_WINDOW=80000
+      # Vueltas maximas de un mismo agente por corrida (desde 0.4.21): la siguiente se deniega.
+      - MAX_VUELTAS=2
     networks:
       - agentes
     volumes:
